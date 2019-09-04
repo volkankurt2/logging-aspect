@@ -1,4 +1,4 @@
-package com.odeal.logaspect.wrapper;
+package com.odeal.logaspect.logger.controller.wrapper;
 
 import org.apache.commons.io.IOUtils;
 
@@ -8,8 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SpringRequestWrapper extends HttpServletRequestWrapper {
+
     private byte[] body;
 
     public SpringRequestWrapper(HttpServletRequest request) {
@@ -33,6 +36,7 @@ public class SpringRequestWrapper extends HttpServletRequestWrapper {
             }
 
             public void setReadListener(ReadListener readListener) {
+
             }
 
             ByteArrayInputStream byteArray = new ByteArrayInputStream(body);
