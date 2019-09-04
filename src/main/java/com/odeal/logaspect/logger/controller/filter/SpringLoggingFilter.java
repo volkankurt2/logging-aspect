@@ -12,12 +12,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 public class SpringLoggingFilter extends OncePerRequestFilter {
     private static final String REQUEST_ID_HEADER_NAME = "X-Request-ID";
     private static final String CORRELATION_ID_HEADER_NAME = "X-Correlation-ID";
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringLoggingFilter.class);
 

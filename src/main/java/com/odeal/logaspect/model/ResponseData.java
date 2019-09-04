@@ -5,6 +5,7 @@ public class ResponseData {
     public String statusCode;
     public Double responseTime;
     public String responseBody;
+    public String responseEnd;
     public String methodName;
     public String message;
 
@@ -48,12 +49,21 @@ public class ResponseData {
         this.message = message;
     }
 
+    public String getResponseEnd() {
+        return responseEnd;
+    }
+
+    public void setResponseEnd(String responseEnd) {
+        this.responseEnd = responseEnd;
+    }
+
     @Override
     public String toString() {
         return "ResponseData{" +
                 "statusCode='" + statusCode + '\'' +
                 ", responseTime=" + responseTime +
                 ", responseBody='" + responseBody + '\'' +
+                ", responseEnd='" + responseEnd + '\'' +
                 ", methodName='" + methodName + '\'' +
                 ", message='" + message + '\'' +
                 '}';

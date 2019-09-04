@@ -1,6 +1,8 @@
 package com.odeal.logaspect.controller;
 
 import com.odeal.logaspect.logger.controller.annotation.Logging;
+import com.odeal.logaspect.logger.controller.annotation.NoLogging;
+import com.odeal.logaspect.logger.controller.filter.SpringLoggingFilter;
 import com.odeal.logaspect.model.Employee;
 import com.odeal.logaspect.service.EmployeeService;
 import com.oracle.tools.packager.Log;
@@ -17,10 +19,10 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class EmployeeController {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringLoggingFilter.class);
 
     @Autowired
     private EmployeeService employeeService;
-
 
     @GetMapping("/employees")
     public List<Employee> getAllEmployees() {
@@ -29,10 +31,21 @@ public class EmployeeController {
 
     @PostMapping("/employees")
     public Employee createEmployee(@Valid @RequestBody Employee employee) {
-        log.info("Burası birinci log");
-        log.info("Burası ikinci log");
+        log.info("Başladı");
+
+        log.info("test methodu çağırılıyor");
+        int result = test();
+        log.info("test methodu çağırıldı");
+        log.info(String.format("test methodu sonucu: %d", result));
+
+        log.info("Bitti");
 
         return employeeService.createEmployee(employee);
+    }
+
+    public int test() {
+        log.info("burası test bişeyler bişeyler");
+        return 1+2;
     }
 
 }

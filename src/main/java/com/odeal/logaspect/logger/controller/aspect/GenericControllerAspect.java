@@ -100,18 +100,21 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
         RequestMapping methodRequestMapping = null;
         RequestMapping classRequestMapping = null;
 
-        RequestData requestData = new RequestData();
 
         ResponseData responseData = new ResponseData();
 
         LOG.info("================= REQUEST START =================");
+        LOG.info("");
+
         try {
             MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
             methodRequestMapping = methodSignature.getMethod().getAnnotation(RequestMapping.class);
             classRequestMapping = proceedingJoinPoint.getTarget().getClass().getAnnotation(RequestMapping.class);
 
             returnType = methodSignature.getReturnType().getName();
-            requestData = logPreExecutionData(proceedingJoinPoint, methodRequestMapping);
+            RequestData requestData = logPreExecutionData(proceedingJoinPoint, methodRequestMapping);
+            LOG.info(objectMapper.writeValueAsString(requestData));
+            LOG.info("");
 
         } catch (Exception e) {
             LOG.error("Exception occurred in pre-proceed logic", e);
@@ -124,22 +127,19 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
         } finally {
             timer.stop();
             if (returnType != null) {
-                Date requestEndDate = new Date();
-                requestData.setRequestEnd(formatter.format(requestEndDate));
-
+                //response logları
                 responseData = logPostExecutionData(proceedingJoinPoint, timer, result, returnType, methodRequestMapping, classRequestMapping);
             }
         }
 
-        LOG.info("");
 
         //LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestData));
         //LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseData));
 
-        requestData.setRequestId(MDC.get(REQUEST_ID_HEADER_NAME));
-        requestData.setCorrelationId(MDC.get(CORRELATION_ID_HEADER_NAME));
+        //requestData.setRequestId(MDC.get(REQUEST_ID_HEADER_NAME));
+        //requestData.setCorrelationId(MDC.get(CORRELATION_ID_HEADER_NAME));
 
-        LOG.info(objectMapper.writeValueAsString(requestData));
+        LOG.info("");
         LOG.info(objectMapper.writeValueAsString(responseData));
 
         LOG.info("");
@@ -158,7 +158,6 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
         Annotation annotations[][] = methodSignature.getMethod().getParameterAnnotations();
 
         StringBuilder arguments = new StringBuilder();
-
         if (argValues.length > 0) {
             arguments = logFunctionArguments(argNames, argValues, annotations, methodRequestMapping);
         }
@@ -197,9 +196,12 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
         }
 
         ResponseData responseData = new ResponseData();
-        responseData.setResponseBody(postMessage.toString());
+        //responseData.setResponseBody(postMessage.toString());
         responseData.setMethodName(methodName);
         responseData.setResponseTime((double) timer.getTime());
+
+        Date responseEnd = new Date();
+        responseData.setResponseEnd(formatter.format(responseEnd));
 
         return responseData;
     }
