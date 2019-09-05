@@ -1,17 +1,17 @@
 package com.odeal.logaspect.model;
 
 public class InfoLog {
+    public String requestId;
+    public String correlationId;
     public String url;
     public String methodName;
     public String authorization;
     public String statusCode;
-    public Double responseTime;
     public String requestBody;
     public String responseBody;
-    public String requestId;
-    public String correlationId;
     public String requestStart;
     public String requestEnd;
+    public Double responseTime;
     public String message;
 
     public String getUrl() {
@@ -113,17 +113,17 @@ public class InfoLog {
     @Override
     public String toString() {
         return "InfoLog{" +
-                "url='" + url + '\'' +
+                "requestId='" + requestId + '\'' +
+                ", correlationId='" + correlationId + '\'' +
+                ", url='" + url + '\'' +
                 ", methodName='" + methodName + '\'' +
                 ", authorization='" + authorization + '\'' +
                 ", statusCode='" + statusCode + '\'' +
-                ", responseTime=" + responseTime +
                 ", requestBody='" + requestBody + '\'' +
                 ", responseBody='" + responseBody + '\'' +
-                ", requestId='" + requestId + '\'' +
-                ", correlationId='" + correlationId + '\'' +
                 ", requestStart='" + requestStart + '\'' +
                 ", requestEnd='" + requestEnd + '\'' +
+                ", responseTime=" + responseTime +
                 ", message='" + message + '\'' +
                 '}';
     }

@@ -29,14 +29,14 @@ public class EmployeeController {
 
     @PostMapping("/employees")
     public Employee createEmployee(@Valid @RequestBody Employee employee) {
-        log.info("Başladı");
+        log.info("deneme endpoint ilk log");
 
         log.info("test methodu çağırılıyor");
         int result = test();
         log.info("test methodu çağırıldı");
         log.info(String.format("test methodu sonucu: %d", result));
 
-        log.info("Bitti");
+        log.info("deneme endpointt");
 
         return employeeService.createEmployee(employee);
     }
