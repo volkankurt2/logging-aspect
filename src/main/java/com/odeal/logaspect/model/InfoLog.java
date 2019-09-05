@@ -1,9 +1,8 @@
 package com.odeal.logaspect.model;
 
-public class LogInfo {
+public class InfoLog {
     public String url;
-    public String queryString;
-    public String method;
+    public String methodName;
     public String authorization;
     public String statusCode;
     public Double responseTime;
@@ -23,20 +22,12 @@ public class LogInfo {
         this.url = url;
     }
 
-    public String getQueryString() {
-        return queryString;
+    public String getMethodName() {
+        return methodName;
     }
 
-    public void setQueryString(String queryString) {
-        this.queryString = queryString;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 
     public String getAuthorization() {
@@ -121,10 +112,9 @@ public class LogInfo {
 
     @Override
     public String toString() {
-        return "InfoLogModel{" +
+        return "InfoLog{" +
                 "url='" + url + '\'' +
-                ", queryString='" + queryString + '\'' +
-                ", method='" + method + '\'' +
+                ", methodName='" + methodName + '\'' +
                 ", authorization='" + authorization + '\'' +
                 ", statusCode='" + statusCode + '\'' +
                 ", responseTime=" + responseTime +
