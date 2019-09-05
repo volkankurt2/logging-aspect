@@ -1,11 +1,9 @@
 package com.odeal.logaspect.controller;
 
 import com.odeal.logaspect.logger.controller.annotation.Logging;
-import com.odeal.logaspect.logger.controller.annotation.NoLogging;
 import com.odeal.logaspect.logger.controller.filter.SpringLoggingFilter;
 import com.odeal.logaspect.model.Employee;
 import com.odeal.logaspect.service.EmployeeService;
-import com.oracle.tools.packager.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

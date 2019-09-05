@@ -9,10 +9,7 @@ import com.odeal.logaspect.model.InfoLog;
 import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -132,14 +129,10 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
             }
         }
 
-
-        //LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestData));
-        //LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseData));
-
         infoLog.setRequestId(MDC.get(REQUEST_ID_HEADER_NAME));
         infoLog.setCorrelationId(MDC.get(CORRELATION_ID_HEADER_NAME));
 
-        LOG.info(objectMapper.writeValueAsString(infoLog));
+        LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(infoLog));
 
         LOG.info("");
         LOG.info("================= REQUEST END ===================");
@@ -193,7 +186,6 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
 
         //infoLog.setResponseBody(postMessage.toString());
         infoLog.setResponseTime((double) timer.getTime());
-
     }
 
     @AfterThrowing(

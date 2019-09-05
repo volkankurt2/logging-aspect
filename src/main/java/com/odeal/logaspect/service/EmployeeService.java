@@ -1,19 +1,11 @@
 package com.odeal.logaspect.service;
 
 import java.util.List;
-import java.util.Optional;
-
 import com.odeal.logaspect.model.Employee;
 import com.odeal.logaspect.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-/**
- * Employee Service
- * @author Ramesh
- *
- */
 @Service
 public class EmployeeService {
     @Autowired
