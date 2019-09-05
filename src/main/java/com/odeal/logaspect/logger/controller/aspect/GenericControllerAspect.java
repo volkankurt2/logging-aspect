@@ -1,17 +1,18 @@
 package com.odeal.logaspect.logger.controller.aspect;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.odeal.logaspect.logger.controller.annotation.Logging;
 import com.odeal.logaspect.logger.controller.annotation.NoLogging;
 import com.odeal.logaspect.logger.controller.utils.JsonUtil;
 import com.odeal.logaspect.logger.controller.utils.RequestUtil;
-import com.odeal.logaspect.model.RequestData;
-import com.odeal.logaspect.model.ResponseData;
+import com.odeal.logaspect.model.InfoLog;
 import org.apache.commons.lang3.time.StopWatch;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -48,6 +49,7 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
     private static final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
     private static final String REQUEST_ID_HEADER_NAME = "X-Request-ID";
     private static final String CORRELATION_ID_HEADER_NAME = "X-Correlation-ID";
+
     @NotNull
     private Logger LOG;
 
@@ -99,9 +101,7 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
         String returnType = null;
         RequestMapping methodRequestMapping = null;
         RequestMapping classRequestMapping = null;
-
-
-        ResponseData responseData = new ResponseData();
+        InfoLog infoLog = new InfoLog();
 
         LOG.info("================= REQUEST START =================");
         LOG.info("");
@@ -112,9 +112,7 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
             classRequestMapping = proceedingJoinPoint.getTarget().getClass().getAnnotation(RequestMapping.class);
 
             returnType = methodSignature.getReturnType().getName();
-            RequestData requestData = logPreExecutionData(proceedingJoinPoint, methodRequestMapping);
-            LOG.info(objectMapper.writeValueAsString(requestData));
-            LOG.info("");
+            logPreExecutionData(proceedingJoinPoint, methodRequestMapping, infoLog);
 
         } catch (Exception e) {
             LOG.error("Exception occurred in pre-proceed logic", e);
@@ -123,12 +121,14 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
         StopWatch timer = new StopWatch();
         try {
             timer.start();
+            Date requestDate = new Date();
+            infoLog.setRequestStart(formatter.format(requestDate));
+
             result = proceedingJoinPoint.proceed();
         } finally {
             timer.stop();
             if (returnType != null) {
-                //response logları
-                responseData = logPostExecutionData(proceedingJoinPoint, timer, result, returnType, methodRequestMapping, classRequestMapping);
+                logPostExecutionData(proceedingJoinPoint, timer, result, returnType, methodRequestMapping, classRequestMapping, infoLog);
             }
         }
 
@@ -136,11 +136,10 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
         //LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestData));
         //LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseData));
 
-        //requestData.setRequestId(MDC.get(REQUEST_ID_HEADER_NAME));
-        //requestData.setCorrelationId(MDC.get(CORRELATION_ID_HEADER_NAME));
+        infoLog.setRequestId(MDC.get(REQUEST_ID_HEADER_NAME));
+        infoLog.setCorrelationId(MDC.get(CORRELATION_ID_HEADER_NAME));
 
-        LOG.info("");
-        LOG.info(objectMapper.writeValueAsString(responseData));
+        LOG.info(objectMapper.writeValueAsString(infoLog));
 
         LOG.info("");
         LOG.info("================= REQUEST END ===================");
@@ -148,7 +147,7 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
         return result;
     }
 
-    public RequestData logPreExecutionData(@NotNull ProceedingJoinPoint proceedingJoinPoint, @Nullable RequestMapping methodRequestMapping) {
+    public void logPreExecutionData(@NotNull ProceedingJoinPoint proceedingJoinPoint, @Nullable RequestMapping methodRequestMapping, InfoLog infoLog) {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
         String methodName = methodSignature.getName() + "()";
@@ -162,27 +161,24 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
             arguments = logFunctionArguments(argNames, argValues, annotations, methodRequestMapping);
         }
 
-        RequestData requestData = new RequestData();
-        requestData.setUrl(requestContext);
-        requestData.setRequestBody(arguments.toString());
-        requestData.setMethod(methodName);
 
-        Date requestDate = new Date();
-        requestData.setRequestStart(formatter.format(requestDate));
+        infoLog.setUrl(requestContext);
+        infoLog.setRequestBody(arguments.toString());
+        infoLog.setMethodName(methodName);
 
-        return requestData;
     }
 
-    public ResponseData logPostExecutionData(
+    public void logPostExecutionData(
             @NotNull ProceedingJoinPoint proceedingJoinPoint,
             @NotNull StopWatch timer,
             @Nullable Object result,
             @NotNull String returnType,
             @Nullable RequestMapping methodRequestMapping,
-            @Nullable RequestMapping classRequestMapping) {
+            @Nullable RequestMapping classRequestMapping,
+            InfoLog infoLog) {
 
-        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
-        String methodName = methodSignature.getName() + "()";
+        Date requestEnd = new Date();
+        infoLog.setRequestEnd(formatter.format(requestEnd));
 
         boolean needsSerialization = isNeedSerilization(methodRequestMapping, classRequestMapping);
         StringBuilder postMessage = new StringBuilder();
@@ -195,15 +191,9 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
             postMessage.append(result);
         }
 
-        ResponseData responseData = new ResponseData();
-        //responseData.setResponseBody(postMessage.toString());
-        responseData.setMethodName(methodName);
-        responseData.setResponseTime((double) timer.getTime());
+        //infoLog.setResponseBody(postMessage.toString());
+        infoLog.setResponseTime((double) timer.getTime());
 
-        Date responseEnd = new Date();
-        responseData.setResponseEnd(formatter.format(responseEnd));
-
-        return responseData;
     }
 
     @AfterThrowing(

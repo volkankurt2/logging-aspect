@@ -3,6 +3,7 @@ package com.odeal.logaspect.logger.controller.aspect;
 import javax.validation.constraints.NotNull;
 
 import com.odeal.logaspect.logger.controller.utils.JsonUtil;
+import com.odeal.logaspect.model.InfoLog;
 import com.odeal.logaspect.model.RequestData;
 import com.odeal.logaspect.model.ResponseData;
 import org.apache.commons.lang3.time.StopWatch;
@@ -35,9 +36,9 @@ public interface ControllerAspect {
      *
      * @param proceedingJoinPoint the joinpoint object representing the target method
      */
-    RequestData logPreExecutionData(
+    void logPreExecutionData(
             @NotNull ProceedingJoinPoint proceedingJoinPoint,
-            @Nullable RequestMapping methodRequestMapping);
+            @Nullable RequestMapping methodRequestMapping, InfoLog infoLog);
 
     /**
      * Logs following data on INFO level about executed method -
@@ -55,13 +56,14 @@ public interface ControllerAspect {
      * @param result the object returned by executed method
      * @param returnType class name of object returned by executed method
      */
-    ResponseData logPostExecutionData(
+    void logPostExecutionData(
             @NotNull ProceedingJoinPoint proceedingJoinPoint,
             @NotNull StopWatch timer,
             @Nullable Object result,
             @NotNull String returnType,
             @Nullable RequestMapping methodRequestMapping,
-            @Nullable RequestMapping classRequestMapping);
+            @Nullable RequestMapping classRequestMapping,
+            InfoLog infoLog);
 
     /**
      * Logs any exception thrown by method. This aspect is executed <b>AFTER</b> the exception has been thrown, so one

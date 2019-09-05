@@ -15,7 +15,8 @@ public class RequestUtil {
 
         return new RequestContext()
                 .add("url", getRequestUrl(request))
-                .add("queryString", getQueryString(request));
+                .add("queryString", getQueryString(request))
+                .add("method", getMethod(request));
     }
 
     @Nullable
@@ -26,6 +27,11 @@ public class RequestUtil {
     @Nullable
     private String getQueryString(@Nullable HttpServletRequest request) {
         return request == null ? null : request.getQueryString();
+    }
+
+    @Nullable
+    private String getMethod(@Nullable HttpServletRequest request) {
+        return request == null ? null : request.getMethod();
     }
 
     @Nullable
