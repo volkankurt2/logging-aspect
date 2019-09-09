@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.odeal</groupId>
-	<artifactId>log-aspect</artifactId>
+	<artifactId>logging</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>log-aspect</name>
+	<name>odeal-logging</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
