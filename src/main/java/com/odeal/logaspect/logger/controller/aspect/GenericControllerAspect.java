@@ -105,7 +105,6 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
 
 
         LOG.info("================= REQUEST START =================");
-        LOG.info("");
 
         try {
             MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
@@ -133,16 +132,10 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
             }
         }
 
-
-        //LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestData));
-        //LOG.info(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseData));
-
         logProvider.setRequestId(MDC.get(REQUEST_ID_HEADER_NAME));
         logProvider.setCorrelationId(MDC.get(CORRELATION_ID_HEADER_NAME));
 
         LOG.info(logProvider.toJson());
-
-        LOG.info("");
         LOG.info("================= REQUEST END ===================");
 
         return result;
@@ -162,11 +155,9 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
             arguments = logFunctionArguments(argNames, argValues, annotations, methodRequestMapping);
         }
 
-
         logProvider.setUrl(requestContext);
         logProvider.setRequestBody(arguments.toString());
         logProvider.setMethodName(methodName);
-
     }
 
     public void logPostExecutionData(
@@ -194,7 +185,6 @@ public class GenericControllerAspect extends LoggerAspect implements ControllerA
 
         //infoLog.setResponseBody(postMessage.toString());
         logProvider.setResponseTime((double) timer.getTime());
-
     }
 
     @AfterThrowing(
