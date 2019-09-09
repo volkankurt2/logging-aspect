@@ -28,7 +28,7 @@ public class InfoLog {
     public String requestEnd;
     public List<String> message;
 
-    private DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+    private DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 
     public InfoLog(){
         message = new ArrayList<String>();
@@ -149,6 +149,7 @@ public class InfoLog {
     }
 
     public String toJson() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(this);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
     }
 }
