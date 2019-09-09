@@ -1,11 +1,10 @@
 package com.odeal.logaspect.controller;
 
 import com.odeal.logaspect.logger.controller.annotation.Logging;
-import com.odeal.logaspect.logger.controller.annotation.NoLogging;
 import com.odeal.logaspect.logger.controller.filter.SpringLoggingFilter;
 import com.odeal.logaspect.model.Employee;
+import com.odeal.logaspect.model.InfoLog;
 import com.odeal.logaspect.service.EmployeeService;
-import com.oracle.tools.packager.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +21,28 @@ public class EmployeeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringLoggingFilter.class);
 
     @Autowired
+    private InfoLog logProvider;
+
+    @Autowired
     private EmployeeService employeeService;
 
     @GetMapping("/employees")
-    public List<Employee> getAllEmployees() {
+    public List<Employee> getAllEmployees()
+    {
+        logProvider.addMessage("başladı.");
+        logProvider.addMessage(String.format("getAllEmployees çağırıldı."));
+
         return employeeService.getAllEmployees();
     }
 
     @PostMapping("/employees")
     public Employee createEmployee(@Valid @RequestBody Employee employee) {
-        log.info("Başladı");
 
-        log.info("test methodu çağırılıyor");
+        logProvider.addMessage("başladı.");
+
         int result = test();
-        log.info("test methodu çağırıldı");
-        log.info(String.format("test methodu sonucu: %d", result));
+        logProvider.addMessage(String.format("test methodu sonucu: %d", result));
 
-        log.info("Bitti");
 
         return employeeService.createEmployee(employee);
     }

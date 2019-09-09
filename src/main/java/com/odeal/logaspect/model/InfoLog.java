@@ -1,5 +1,19 @@
 package com.odeal.logaspect.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+@Component
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class InfoLog {
     public String url;
     public String methodName;
@@ -12,7 +26,13 @@ public class InfoLog {
     public String correlationId;
     public String requestStart;
     public String requestEnd;
-    public String message;
+    public List<String> message;
+
+    private DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+
+    public InfoLog(){
+        message = new ArrayList<String>();
+    }
 
     public String getUrl() {
         return url;
@@ -102,12 +122,12 @@ public class InfoLog {
         this.requestEnd = requestEnd;
     }
 
-    public String getMessage() {
+    public List<String> getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void addMessage(String message) {
+        this.message.add(dateFormat.format(Calendar.getInstance().getTime()) + " - " +message);
     }
 
     @Override
@@ -126,5 +146,9 @@ public class InfoLog {
                 ", requestEnd='" + requestEnd + '\'' +
                 ", message='" + message + '\'' +
                 '}';
+    }
+
+    public String toJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(this);
     }
 }

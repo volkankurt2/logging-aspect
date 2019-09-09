@@ -1,12 +1,12 @@
 package com.odeal.logaspect.service;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.odeal.logaspect.model.Employee;
+import com.odeal.logaspect.model.InfoLog;
 import com.odeal.logaspect.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 /**
@@ -16,10 +16,16 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class EmployeeService {
+
+    @Autowired
+    private InfoLog logProvider;
+
     @Autowired
     private EmployeeRepository employeeRepository;
 
     public List <Employee> getAllEmployees() {
+
+        logProvider.addMessage("repo get çağırdım.");
         return employeeRepository.findAll();
     }
 
